@@ -38,16 +38,10 @@ scatter(F2,weight )
 hold on
 plot(x2,weight_fit2)
 
-hold off
-
-%below here is test stuff 
 sigma_y1 = sqrt(1/(length(x)-2) * sum((weight_fit1-weight).^2));
+
 sigma_y2 = sqrt(1/(length(x2)-2) * sum((weight_fit2-weight).^2));
-figure(3)
-plot(x,weight_fit1+2.*sigma_y1)
-hold on
-plot(x2,weight_fit2+2.*sigma_y2)
-figure(4)
-hold on
-plot(x,weight_fit1.*sigma_y1)
-plot(x2,weight_fit2.*sigma_y2)
+
+plot(x,weight_fit1+2*sigma_y %plotting 95% confidence interval of y data
+plot(x,yfit-2*sigma_y,'--','Color',cmap(5,:),'LineWidth',2, 'HandleVisibility','off')
+
