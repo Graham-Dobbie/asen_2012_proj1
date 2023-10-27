@@ -40,7 +40,9 @@ plot(x2,weight_fit2)
 
 hold off
 
-%below here is test stuff 
+%below here is test stuff  
+
+%testing commit b44
 sigma_y1 = sqrt(1/(length(x)-2) * sum((weight_fit1-weight).^2));
 sigma_y2 = sqrt(1/(length(x2)-2) * sum((weight_fit2-weight).^2));
 figure(3)
