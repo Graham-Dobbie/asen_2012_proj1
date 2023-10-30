@@ -40,8 +40,8 @@ sigma_y2 = sqrt(1/(length(x2)-2) * sum((weight_fit2-Weight_T2).^2));
 
 scale_error = 1
 
-error_F1_pos = weight_fit1 + 2.*delta1;
-error_F1_neg = weight_fit1 - 2.*delta1;
+error_F1_pos = weight_fit1 + 2.*delta1 + 2*scale_error;
+error_F1_neg = weight_fit1 - 2.*delta1 - 2*scale_error;
 
 figure(1)
 scatter(Weight_T1,F1)
@@ -53,23 +53,18 @@ plot(x, error_F1_neg)
 ylabel("Volts (mV)")
 xlabel("Weight (lbs)")
 
-error_F1_pos = weight_fit1+2.*delta1 + 1;
-error_F1_neg = weight_fit1-2.*delta1 - 1;
+error_F2_pos = weight_fit2+ 2.*delta2 + 2*scale_error;
+error_F2_neg = weight_fit2-2.*delta2 - 2*scale_error;
 
 figure(2)
 scatter(Weight_T2,F2)
 hold on
 plot(x2, weight_fit2)
 mean(F2)
-
-%plot(weight_fit2+2.*sigma_y2,x2)
-%plot(weight_fit2-2.*sigma_y2,x2)
+plot(x2, error_F2_pos)
+plot(x2, error_F2_neg)
 ylabel("Volts (mV)")
 xlabel("Weight (lbs)")
-
-
-
-
 
 
 raw_data = load("testrun1.mat");
