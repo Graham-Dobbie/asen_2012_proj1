@@ -9,48 +9,64 @@ static_test = readmatrix('Static Test Stand Calibration Case 1.xlsx');
 %convert mv to lbs 
 
 weight = static_test(:,1);
-F1 = static_test(:,4);
-F2 = static_test(:,5);
+F1 = static_test(:,4) - static_test(:,2);
+F2 = static_test(:,5) - static_test(:,1);
 
-plot(F2,weight, 'Color', 'g')
+Weight_T1 = static_test(:,1) .* ( F1 ./ ( F1 + F2) );
+Weight_T2 = static_test(:,1) .* ( F2 ./ ( F1 + F2) ); 
+
+figure(3)
+tiledlayout(2,1)
+nexttile
+scatter(Weight_T1 ,F1)
 hold on
-plot(F1,weight)
-legend('F2','F1')
-hold off 
+legend('F1')
+
+nexttile
+scatter(Weight_T2,F2, 'Color', 'g')
+legend('F2')
 
 polyorder = 1;
-[F1poly,S1] = polyfit(F1, weight, polyorder);
-[F2poly,S2] = polyfit(F2, weight, polyorder);
+[F1poly,S1] = polyfit(Weight_T1, F1, polyorder);
+[F2poly,S2] = polyfit(Weight_T2, F2, polyorder);
 
-x = 0:max(F1)+10;
-x2 = 0:max(F2)+20;
+x = 0:max(Weight_T1)+1;
+x2 = 0:max(Weight_T2)+1;
 [weight_fit1, delta1] = polyval(F1poly, x, S1);
 [weight_fit2, delta2] = polyval(F2poly,x2, S2);
 
+sigma_y1 = sqrt(1/(length(x)-2) * sum((weight_fit1-Weight_T1).^2));
+sigma_y2 = sqrt(1/(length(x2)-2) * sum((weight_fit2-Weight_T2).^2));
+
+scale_error = 1
+
+error_F1_pos = weight_fit1 + 2.*delta1;
+error_F1_neg = weight_fit1 - 2.*delta1;
 
 figure(1)
-scatter(F1, weight)
+scatter(Weight_T1,F1)
 hold on
-plot(x,weight_fit1)
+plot(x, weight_fit1)
+mean(F1)
+plot(x, error_F1_pos)
+plot(x, error_F1_neg)
+ylabel("Volts (mV)")
+xlabel("Weight (lbs)")
+
+error_F1_pos = weight_fit1+2.*delta1 + 1;
+error_F1_neg = weight_fit1-2.*delta1 - 1;
 
 figure(2)
-scatter(F2,weight )
+scatter(Weight_T2,F2)
 hold on
-plot(x2,weight_fit2)
+plot(x2, weight_fit2)
+mean(F2)
 
-hold off
+%plot(weight_fit2+2.*sigma_y2,x2)
+%plot(weight_fit2-2.*sigma_y2,x2)
+ylabel("Volts (mV)")
+xlabel("Weight (lbs)")
 
-%below here is test stuff 
-sigma_y1 = sqrt(1/(length(x)-2) * sum((weight_fit1-weight).^2));
-sigma_y2 = sqrt(1/(length(x2)-2) * sum((weight_fit2-weight).^2));
-figure(3);
-plot(x,weight_fit1+2.*sigma_y1)
-hold on
-plot(x2,weight_fit2+2.*sigma_y2)
-figure(4)
-hold on
-plot(x,weight_fit1.*sigma_y1)
-plot(x2,weight_fit2.*sigma_y2)
 
 
 
@@ -89,6 +105,18 @@ xlabel("Time since launch (s)");
 ylabel("Thrust (lb)");
 legend("F1 Thrust", "F2 Thrust");
 title("Cropped Ploted Thrust Data over Time")
+
+combined_thrust = cropped_F1_data + cropped_F2_data;
+
+
+figure(7);
+hold on;
+plot( cropped_time_data, combined_thrust, "k-");
+xlabel("Time since launch (s)");
+ylabel("Thrust (lb)");
+legend("Total Thrust");
+title("Cropped Ploted Thrust Data over Time");
+
 
 
 
